@@ -1,9 +1,11 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
+
 metadata:
   name: bapp-db
+
 spec:
   minAvailable: 2
-  selector: 
+  selector:
     matchLabels:
-	  app: nginx
+      app: nginx
