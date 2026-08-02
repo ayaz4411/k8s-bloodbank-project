@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bapp-np
+spec:
+  podSelector:
+    matchLables:
+      app: nginx
+	
+  policyTypes:
+    - Ingress
+	- Egress
+	
+  ingress:
+    - from:
+	    nameSpaceSelector:
+		  matchLabels:
+		    kubernetes.io/metadata.name: ingress-nginx
+	    podSelector:
+		  matchLabels:
+		    kubernetes.io/metadata.name: ingress-nginx
+	    ports:
+		  - port: 80
+		  
+	- to:
+	    podSelector:
+		  matchLabels:
+		    app: app-database
+		ports:
+		  - port: 3306
+		  
+	-to:
+	    nameSpaceSelector:
+		  matchLabels:
+		    kubernetes.io/metadata.name: kube-system 
+		  ports:
+		   - port: 53
+		     protocol: UDP

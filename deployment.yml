@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+	  app: nginx
+  template:
+    metadata:
+	  labels:
+	    app: nginx
+    spec:
+	  conatainers:
+	    name: cont-1
+		image: ayaz4411/bapp:app
+		ports
+		  - containerPort: 80 
+		  
+	# configmap integration
+	
+	envFrom:
+	  - configMapRef:
+	      name: bapp-config
+		  
+	#Resource quota
+	
+	resources:
+	  requests:
+	    cpu: "100m"
+		memory: "250Mi"
+	  limits:
+	    cpu: "1000m"
+		memory: "700Mi"
+		
+	livenessProbe:
+	  httpGet:
+	    path: /
+		port: 80
+        initialDelaySeconds: 30
+        period: 5
+
+	readinessProbe:
+	  httpGet:
+	    path: /
+		port: 80
+		initialDelaySeconds: 10
+		period: 5

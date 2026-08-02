@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+	  app: app-database
+  template:
+    metadata:
+	  labels:
+	    app: app-database
+    spec:
+	  conatainers:
+	    name: cont-1
+		image: ayaz4411/bapp:db
+		ports
+		  - containerPort: 3306 
+		  
+	# configmap integration
+	
+	envFrom:
+	  - secretRef:
+	      name: bapp-secret
+		  
+	#Resource quota
+	
+	resources:
+	  requests:
+	    cpu: "100m"
+		memory: "250Mi"
+	  limits:
+	    cpu: "1000m"
+		memory: "700Mi"	
+
+	volumeMounts:
+	  - name: pvc-1
+	    mountPath: /usr/share/nginx/html
+		
+	volumeClaimTemplates:
+		  - metadata:
+		      name: pvc-1
+			spec:
+			  accessModes:
+			    - ReadWriteOnce
+			resource:
+			  requests:
+			    storage: 2Gi
