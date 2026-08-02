@@ -1,38 +1,41 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
+
 metadata:
   name: bapp-np
+
 spec:
   podSelector:
-    matchLables:
+    matchLabels:
       app: nginx
-	
+
   policyTypes:
     - Ingress
-	- Egress
-	
+    - Egress
+
   ingress:
+    # Allow traffic from nginx ingress controller
     - from:
-	    nameSpaceSelector:
-		  matchLabels:
-		    kubernetes.io/metadata.name: ingress-nginx
-	    podSelector:
-		  matchLabels:
-		    kubernetes.io/metadata.name: ingress-nginx
-	    ports:
-		  - port: 80
-		  
-	- to:
-	    podSelector:
-		  matchLabels:
-		    app: app-database
-		ports:
-		  - port: 3306
-		  
-	-to:
-	    nameSpaceSelector:
-		  matchLabels:
-		    kubernetes.io/metadata.name: kube-system 
-		  ports:
-		   - port: 53
-		     protocol: UDP
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 80
+
+  egress:
+    # Allow application to access MySQL
+    - to:
+        - podSelector:
+            matchLabels:
+              app: app-database
+      ports:
+        - port: 3306
+
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
